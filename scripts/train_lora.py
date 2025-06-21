@@ -159,12 +159,20 @@ class LoRATrainer:
         train_files = image_files[:split_idx]
         val_files = image_files[split_idx:]
         
+        # Kohya SS expects directories with repetition counts (e.g., "10_my_comic")
+        # Create the correct directory structure
+        train_repeat_dir = os.path.join(f"{self.dataset_path}/train", f"10_{self.comic_name}")
+        val_repeat_dir = os.path.join(f"{self.dataset_path}/validation", f"10_{self.comic_name}")
+        
+        os.makedirs(train_repeat_dir, exist_ok=True)
+        os.makedirs(val_repeat_dir, exist_ok=True)
+        
         # Process training images
         print("🔄 Processing training images...")
         for i, filename in enumerate(train_files):
             input_path = os.path.join(self.input_dir, filename)
-            output_path = os.path.join(f"{self.dataset_path}/train", filename)
-            caption_path = os.path.join(f"{self.dataset_path}/train", f"{Path(filename).stem}.txt")
+            output_path = os.path.join(train_repeat_dir, filename)
+            caption_path = os.path.join(train_repeat_dir, f"{Path(filename).stem}.txt")
             
             # Process image
             processed_img = self.process_image(input_path, self.target_size)
@@ -182,8 +190,8 @@ class LoRATrainer:
         print("🔄 Processing validation images...")
         for i, filename in enumerate(val_files):
             input_path = os.path.join(self.input_dir, filename)
-            output_path = os.path.join(f"{self.dataset_path}/validation", filename)
-            caption_path = os.path.join(f"{self.dataset_path}/validation", f"{Path(filename).stem}.txt")
+            output_path = os.path.join(val_repeat_dir, filename)
+            caption_path = os.path.join(val_repeat_dir, f"{Path(filename).stem}.txt")
             
             # Process image
             processed_img = self.process_image(input_path, self.target_size)
@@ -201,6 +209,77 @@ class LoRATrainer:
         print(f"   Training images: {len(train_files)}")
         print(f"   Validation images: {len(val_files)}")
         print(f"   Total images: {len(image_files)}")
+        print(f"   Training directory: {train_repeat_dir}")
+        print(f"   Validation directory: {val_repeat_dir}")
+        
+        return True
+    
+    def verify_dataset_structure(self):
+        """Verify that the dataset directory structure is correct for Kohya SS"""
+        print(f"🔍 Verifying dataset structure...")
+        
+        # Check if dataset directory exists
+        if not os.path.exists(self.dataset_path):
+            print(f"❌ Dataset directory not found: {self.dataset_path}")
+            return False
+        
+        # Check if train and validation directories exist
+        train_dir = os.path.join(self.dataset_path, "train")
+        val_dir = os.path.join(self.dataset_path, "validation")
+        
+        if not os.path.exists(train_dir):
+            print(f"❌ Training directory not found: {train_dir}")
+            return False
+        
+        if not os.path.exists(val_dir):
+            print(f"❌ Validation directory not found: {val_dir}")
+            return False
+        
+        # Check for repetition directories (e.g., "10_my_comic")
+        train_repeat_dir = os.path.join(train_dir, f"10_{self.comic_name}")
+        val_repeat_dir = os.path.join(val_dir, f"10_{self.comic_name}")
+        
+        if not os.path.exists(train_repeat_dir):
+            print(f"❌ Training repeat directory not found: {train_repeat_dir}")
+            return False
+        
+        if not os.path.exists(val_repeat_dir):
+            print(f"❌ Validation repeat directory not found: {val_repeat_dir}")
+            return False
+        
+        # Check if directories contain images
+        train_images = [f for f in os.listdir(train_repeat_dir) 
+                       if f.lower().endswith(('.png', '.jpg', '.jpeg', '.webp'))]
+        val_images = [f for f in os.listdir(val_repeat_dir) 
+                     if f.lower().endswith(('.png', '.jpg', '.jpeg', '.webp'))]
+        
+        if not train_images:
+            print(f"❌ No images found in training directory: {train_repeat_dir}")
+            return False
+        
+        if not val_images:
+            print(f"❌ No images found in validation directory: {val_repeat_dir}")
+            return False
+        
+        print(f"✅ Dataset structure verified!")
+        print(f"   Training images: {len(train_images)}")
+        print(f"   Validation images: {len(val_images)}")
+        print(f"   Total images: {len(train_images) + len(val_images)}")
+        
+        # Check for caption files
+        train_captions = [f for f in os.listdir(train_repeat_dir) if f.endswith('.txt')]
+        val_captions = [f for f in os.listdir(val_repeat_dir) if f.endswith('.txt')]
+        
+        print(f"   Training captions: {len(train_captions)}")
+        print(f"   Validation captions: {len(val_captions)}")
+        
+        # Show the correct directory structure
+        print(f"\n📂 Correct directory structure:")
+        print(f"   {self.dataset_path}/")
+        print(f"   ├── train/")
+        print(f"   │   └── 10_{self.comic_name}/ ({len(train_images)} images)")
+        print(f"   └── validation/")
+        print(f"       └── 10_{self.comic_name}/ ({len(val_images)} images)")
         
         return True
     
@@ -297,11 +376,12 @@ class LoRATrainer:
         os.chdir('./sd-scripts')
         
         # Build training command
+        # Note: train_data_dir should point to the parent directory containing train/validation folders
         training_cmd = [
             "accelerate", "launch", "--num_cpu_threads_per_process", "8",
             "train_network.py",
             "--pretrained_model_name_or_path=runwayml/stable-diffusion-v1-5",
-            f"--train_data_dir=../{self.dataset_path}/train",
+            f"--train_data_dir=../{self.dataset_path}",  # Point to parent directory, not train subdirectory
             f"--output_dir=../{self.output_path}",
             "--resolution=512",
             "--network_alpha=32",
@@ -333,6 +413,11 @@ class LoRATrainer:
         
         print("🔧 Training command:")
         print(" ".join(training_cmd))
+        print(f"📁 Training data directory: ../{self.dataset_path}")
+        print(f"📁 Expected structure:")
+        print(f"   ../{self.dataset_path}/")
+        print(f"   ├── train/ (training images)")
+        print(f"   └── validation/ (validation images)")
         print("\n🚀 Starting training...")
         
         try:
@@ -459,21 +544,26 @@ class LoRATrainer:
         if not self.prepare_dataset():
             return False
         
-        # Step 2: Create training config
-        print("\n⚙️ Step 2: Creating training configuration...")
+        # Step 2: Verify dataset structure
+        print("\n🔍 Step 2: Verifying dataset structure...")
+        if not self.verify_dataset_structure():
+            return False
+        
+        # Step 3: Create training config
+        print("\n⚙️ Step 3: Creating training configuration...")
         config_path = self.create_training_config(epochs, learning_rate, lora_rank, batch_size)
         
-        # Step 3: Start training
-        print("\n🚀 Step 3: Starting LoRA training...")
+        # Step 4: Start training
+        print("\n🚀 Step 4: Starting LoRA training...")
         if not self.start_training(config_path):
             return False
         
-        # Step 4: Test model
-        print("\n🧪 Step 4: Testing trained model...")
+        # Step 5: Test model
+        print("\n🧪 Step 5: Testing trained model...")
         self.test_model()
         
-        # Step 5: Export model
-        print("\n📦 Step 5: Exporting model...")
+        # Step 6: Export model
+        print("\n📦 Step 6: Exporting model...")
         self.export_model()
         
         print("\n" + "=" * 60)
