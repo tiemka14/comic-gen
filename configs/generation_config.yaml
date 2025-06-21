@@ -1,0 +1,170 @@
+# Image Generation Configuration for Comic Panels
+# Settings for the Gradio web interface and batch generation
+
+# Model Configuration
+model:
+  base_model: "runwayml/stable-diffusion-v1-5"  # Base Stable Diffusion model
+  lora_path: "./models/comic_lora.safetensors"  # Path to trained LoRA model
+  lora_scale: 0.8  # LoRA strength (0.0 to 1.0)
+  vae_path: null  # Custom VAE path (optional)
+  
+# Generation Parameters
+generation:
+  # Basic parameters
+  num_inference_steps: 50  # Number of denoising steps
+  guidance_scale: 7.5  # Classifier-free guidance scale
+  width: 512  # Image width
+  height: 512  # Image height
+  
+  # Advanced parameters
+  num_images_per_prompt: 1  # Number of images to generate per prompt
+  eta: 0.0  # ETA for DDIM sampling
+  seed: -1  # Random seed (-1 for random)
+  
+  # Sampling parameters
+  sampler: "euler_a"  # Sampling method
+  scheduler: "DDIMScheduler"  # Scheduler type
+  
+# Style Configuration
+styles:
+  # Default style weights
+  manga: 1.0
+  western: 1.0
+  european: 1.0
+  webcomic: 1.0
+  vintage: 1.0
+  noir: 1.0
+  
+  # Style mixing
+  enable_style_mixing: false  # Allow mixing multiple styles
+  max_styles_per_prompt: 2  # Maximum styles to mix
+  
+# Prompt Configuration
+prompts:
+  # Default positive prompt
+  default_positive: "comic panel, high quality, detailed, professional artwork"
+  
+  # Default negative prompt
+  default_negative: "low quality, blurry, distorted, deformed, bad anatomy, bad proportions, extra limbs, missing limbs, floating limbs, mutated hands and fingers, out of focus, long neck, long body, mutated hands and fingers, out of focus, long neck, long body, extra limbs, missing limbs, floating limbs, mutated hands and fingers, out of focus, long neck, long body, extra limbs, missing limbs, floating limbs, mutated hands and fingers, out of focus, long neck, long body"
+  
+  # Prompt enhancement
+  enable_prompt_enhancement: true  # Automatically enhance prompts
+  enhancement_strength: 0.3  # How much to enhance (0.0 to 1.0)
+  
+# Panel Types Configuration
+panel_types:
+  # Default panel type settings
+  close_up:
+    width: 512
+    height: 512
+    aspect_ratio: "1:1"
+    
+  wide_shot:
+    width: 768
+    height: 512
+    aspect_ratio: "3:2"
+    
+  action:
+    width: 512
+    height: 768
+    aspect_ratio: "2:3"
+    
+  dialogue:
+    width: 512
+    height: 512
+    aspect_ratio: "1:1"
+    
+  establishing:
+    width: 1024
+    height: 512
+    aspect_ratio: "2:1"
+    
+  splash:
+    width: 1024
+    height: 1024
+    aspect_ratio: "1:1"
+
+# Output Configuration
+output:
+  # File settings
+  output_dir: "./generated_panels"  # Output directory
+  file_format: "png"  # Output format (png, jpg, webp)
+  quality: 95  # JPEG quality (if using jpg)
+  
+  # Naming convention
+  naming_pattern: "{panel_number:03d}_{style}_{panel_type}"  # File naming pattern
+  
+  # Metadata
+  save_metadata: true  # Save generation metadata
+  metadata_format: "json"  # Metadata format
+  
+# Batch Processing
+batch:
+  # Batch generation settings
+  enable_batch_processing: true  # Enable batch processing
+  max_batch_size: 4  # Maximum images per batch
+  batch_timeout: 300  # Timeout for batch processing (seconds)
+  
+  # Queue settings
+  max_queue_size: 10  # Maximum items in queue
+  queue_timeout: 60  # Queue timeout (seconds)
+
+# UI Configuration (Gradio)
+ui:
+  # Interface settings
+  theme: "default"  # Gradio theme
+  show_api: false  # Show API documentation
+  show_error: true  # Show error messages
+  
+  # Layout
+  layout: "vertical"  # Layout direction
+  show_progress: true  # Show generation progress
+  
+  # Advanced UI
+  enable_advanced_options: true  # Show advanced generation options
+  enable_style_mixer: true  # Show style mixing interface
+  enable_prompt_builder: true  # Show prompt builder interface
+  
+# Performance Configuration
+performance:
+  # Memory optimization
+  enable_attention_slicing: true  # Enable attention slicing
+  enable_vae_slicing: true  # Enable VAE slicing
+  enable_model_cpu_offload: false  # Enable model CPU offload
+  
+  # Caching
+  enable_model_caching: true  # Cache loaded models
+  cache_dir: "./cache"  # Cache directory
+  
+  # Optimization
+  use_fp16: true  # Use fp16 for inference
+  use_xformers: true  # Use xformers if available
+
+# Quality Control
+quality:
+  # Automatic quality checks
+  enable_quality_check: true  # Enable automatic quality checking
+  min_quality_score: 0.7  # Minimum quality score
+  
+  # Filtering
+  filter_low_quality: true  # Filter out low quality images
+  quality_threshold: 0.5  # Quality threshold for filtering
+  
+  # Enhancement
+  enable_post_processing: false  # Enable post-processing
+  post_processing_strength: 0.1  # Post-processing strength
+
+# Logging Configuration
+logging:
+  # Log levels
+  log_level: "INFO"  # Logging level
+  log_file: "./logs/generation.log"  # Log file path
+  
+  # Logging options
+  log_prompts: true  # Log generated prompts
+  log_parameters: true  # Log generation parameters
+  log_performance: true  # Log performance metrics
+  
+  # Metrics
+  enable_metrics: true  # Enable performance metrics
+  metrics_interval: 100  # Metrics collection interval 

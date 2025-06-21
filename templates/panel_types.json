@@ -1,0 +1,82 @@
+{
+  "close_up": {
+    "description": "Close-up shot focusing on character's face or important detail",
+    "prompt_template": "close-up shot, {character} face, {emotion}, detailed facial features, {lighting}",
+    "composition": "tight framing, emphasis on facial expression",
+    "use_cases": ["emotional moments", "character reactions", "important details"],
+    "camera_angle": "straight on or slight angle",
+    "background": "blurred or minimal"
+  },
+  "wide_shot": {
+    "description": "Wide shot showing full scene and environment",
+    "prompt_template": "wide shot, {character} in {environment}, full body, {background}, establishing shot",
+    "composition": "full scene visible, character in context",
+    "use_cases": ["establishing locations", "action scenes", "group shots"],
+    "camera_angle": "eye level or slightly elevated",
+    "background": "detailed environment"
+  },
+  "action": {
+    "description": "Dynamic action shot with movement and energy",
+    "prompt_template": "action shot, {character} {action}, dynamic pose, motion lines, {background}, dramatic lighting",
+    "composition": "dynamic angles, motion emphasis",
+    "use_cases": ["fight scenes", "chase sequences", "sports moments"],
+    "camera_angle": "dramatic angles, low or high",
+    "background": "action-appropriate environment"
+  },
+  "dialogue": {
+    "description": "Panel focused on conversation between characters",
+    "prompt_template": "dialogue scene, {character1} and {character2}, conversation, {emotion}, {setting}",
+    "composition": "character interaction, speech bubble space",
+    "use_cases": ["conversations", "exposition", "character development"],
+    "camera_angle": "medium shot, eye level",
+    "background": "contextual but not distracting"
+  },
+  "establishing": {
+    "description": "Establishing shot showing location or setting",
+    "prompt_template": "establishing shot, {location}, {time_of_day}, {weather}, {mood}, wide view",
+    "composition": "landscape or cityscape focus",
+    "use_cases": ["scene transitions", "location introduction", "mood setting"],
+    "camera_angle": "wide angle, elevated",
+    "background": "detailed environment as main focus"
+  },
+  "splash": {
+    "description": "Full-page splash panel for dramatic impact",
+    "prompt_template": "splash panel, {character} dramatic pose, epic composition, {background}, cinematic lighting",
+    "composition": "full page, dramatic impact",
+    "use_cases": ["major reveals", "climactic moments", "character introductions"],
+    "camera_angle": "dramatic, often low angle",
+    "background": "epic or dramatic setting"
+  },
+  "silhouette": {
+    "description": "Silhouette shot for mystery or dramatic effect",
+    "prompt_template": "silhouette, {character} against {background}, dramatic lighting, mysterious atmosphere",
+    "composition": "dark figure against light background",
+    "use_cases": ["mystery", "dramatic reveals", "atmospheric moments"],
+    "camera_angle": "various, often backlit",
+    "background": "bright background for contrast"
+  },
+  "split": {
+    "description": "Split panel showing multiple perspectives or times",
+    "prompt_template": "split panel, {scene1} and {scene2}, parallel action, {connection}",
+    "composition": "divided layout, multiple scenes",
+    "use_cases": ["parallel action", "time jumps", "multiple perspectives"],
+    "camera_angle": "varies by scene",
+    "background": "different for each section"
+  },
+  "insert": {
+    "description": "Small insert panel showing detail or reaction",
+    "prompt_template": "insert panel, {detail}, close-up, {emotion}, small frame",
+    "composition": "small panel, focused detail",
+    "use_cases": ["reactions", "important details", "time indicators"],
+    "camera_angle": "close-up",
+    "background": "minimal or blurred"
+  },
+  "montage": {
+    "description": "Montage of quick shots showing passage of time",
+    "prompt_template": "montage, {sequence_of_events}, quick cuts, {time_progression}",
+    "composition": "multiple small panels",
+    "use_cases": ["time passage", "training sequences", "travel montages"],
+    "camera_angle": "varies",
+    "background": "varies by scene"
+  }
+} 

@@ -1,0 +1,150 @@
+# LoRA Training Configuration for Comic Generation
+# Compatible with Kohya SS training scripts
+
+# Model Configuration
+model:
+  base_model: "runwayml/stable-diffusion-v1-5"  # Base model to fine-tune
+  model_name: "comic_lora"  # Name for the trained LoRA
+  output_dir: "./outputs"  # Directory to save trained models
+  
+# LoRA Configuration
+lora:
+  r: 16  # LoRA rank (higher = more parameters, more capacity)
+  alpha: 32  # LoRA scaling factor
+  dropout: 0.1  # Dropout rate for regularization
+  target_modules:  # Which modules to apply LoRA to
+    - "q_proj"
+    - "v_proj"
+    - "k_proj"
+    - "out_proj"
+    - "to_q"
+    - "to_k"
+    - "to_v"
+    - "to_out.0"
+    - "add_k_proj"
+    - "add_v_proj"
+    - "add_q_proj"
+    - "add_out_proj"
+
+# Training Configuration
+training:
+  num_train_epochs: 100  # Number of training epochs
+  per_device_train_batch_size: 1  # Batch size per device
+  gradient_accumulation_steps: 4  # Gradient accumulation steps
+  learning_rate: 1e-4  # Learning rate
+  lr_scheduler: "cosine"  # Learning rate scheduler
+  lr_warmup_steps: 100  # Warmup steps
+  weight_decay: 0.01  # Weight decay for regularization
+  
+  # Mixed precision training
+  mixed_precision: "fp16"  # Use fp16 for faster training
+  gradient_checkpointing: true  # Save memory
+  
+  # Logging and saving
+  logging_steps: 10  # Log every N steps
+  save_steps: 500  # Save checkpoint every N steps
+  save_total_limit: 3  # Keep only N checkpoints
+  
+  # Evaluation
+  evaluation_strategy: "steps"
+  eval_steps: 500
+  eval_accumulation_steps: 1
+
+# Dataset Configuration
+dataset:
+  train_data_dir: "./dataset/train"  # Training data directory
+  validation_data_dir: "./dataset/validation"  # Validation data directory
+  resolution: 512  # Image resolution for training
+  center_crop: true  # Center crop images
+  random_flip: true  # Random horizontal flip for augmentation
+  
+  # Caption configuration
+  caption_extension: ".txt"  # Caption file extension
+  caption_column: "text"  # Column name for captions
+  
+  # Data loading
+  num_workers: 4  # Number of data loading workers
+  pin_memory: true  # Pin memory for faster data loading
+
+# Prompt Template Configuration
+prompts:
+  # Training prompt template
+  train_prompt: "comic panel, {style}, {description}, high quality, detailed"
+  
+  # Validation prompt template
+  val_prompt: "comic panel, {style}, {description}, high quality, detailed"
+  
+  # Negative prompt for training
+  negative_prompt: "low quality, blurry, distorted, deformed, bad anatomy, bad proportions"
+
+# Style Configuration
+styles:
+  manga:
+    weight: 1.0
+    base_prompt: "manga style, anime style, cel shading"
+  western:
+    weight: 1.0
+    base_prompt: "comic book style, american comic, bold colors"
+  european:
+    weight: 1.0
+    base_prompt: "european comic style, ligne claire"
+  webcomic:
+    weight: 1.0
+    base_prompt: "webcomic style, digital art, clean lines"
+  vintage:
+    weight: 1.0
+    base_prompt: "vintage comic style, golden age comic"
+
+# Advanced Configuration
+advanced:
+  # Memory optimization
+  use_8bit_adam: false  # Use 8-bit Adam optimizer
+  use_xformers: true  # Use xformers for memory efficiency
+  
+  # LoRA specific
+  lora_weights: null  # Path to pre-trained LoRA weights
+  lora_scale: 1.0  # LoRA scale for inference
+  
+  # Text encoder training
+  train_text_encoder: false  # Whether to train text encoder
+  text_encoder_lr: 1e-5  # Text encoder learning rate
+  
+  # VAE configuration
+  vae: null  # Path to custom VAE
+  
+  # Network configuration
+  network_alpha: 32  # Network alpha for LoRA
+  network_dim: 16  # Network dimension for LoRA
+  
+  # Training optimizations
+  max_grad_norm: 1.0  # Gradient clipping
+  seed: 42  # Random seed for reproducibility
+  
+# Output Configuration
+output:
+  save_model_as: "safetensors"  # Model save format
+  save_precision: "fp16"  # Save precision
+  save_every_n_epochs: 10  # Save every N epochs
+  
+  # Logging
+  log_with: "tensorboard"  # Logging backend
+  log_tracker_name: "comic_lora_training"  # Tracker name
+  
+  # Inference
+  inference_during_training: true  # Generate samples during training
+  inference_steps: 50  # Number of inference steps
+  inference_guidance_scale: 7.5  # Guidance scale for inference
+
+# Environment Configuration
+environment:
+  # Hardware
+  use_cpu: false  # Use CPU for training (not recommended)
+  use_mps: false  # Use MPS for Apple Silicon
+  
+  # Distributed training
+  local_rank: -1  # Local rank for distributed training
+  world_size: 1  # World size for distributed training
+  
+  # Memory management
+  max_memory: "0"  # Max memory per GPU (0 = auto)
+  max_cpu_memory: "0"  # Max CPU memory (0 = auto) 

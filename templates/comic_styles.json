@@ -1,0 +1,92 @@
+{
+  "manga": {
+    "description": "Japanese manga style with distinctive features",
+    "base_prompt": "manga style, anime style, cel shading, clean lines, expressive eyes, dynamic poses",
+    "negative_prompt": "realistic, photorealistic, 3d render, western comic, european comic",
+    "characteristics": [
+      "large expressive eyes",
+      "spiky or flowing hair",
+      "clean line art",
+      "flat coloring with cel shading",
+      "dynamic action poses",
+      "emotional facial expressions"
+    ],
+    "color_palette": "vibrant, saturated colors",
+    "line_style": "clean, bold lines"
+  },
+  "western": {
+    "description": "American comic book style with bold colors and dramatic lighting",
+    "base_prompt": "comic book style, american comic, bold colors, dramatic lighting, superhero style, detailed linework",
+    "negative_prompt": "manga, anime, realistic, photorealistic, european comic",
+    "characteristics": [
+      "muscular, heroic proportions",
+      "bold, dramatic shadows",
+      "vibrant primary colors",
+      "detailed backgrounds",
+      "dynamic action scenes",
+      "speech bubbles and sound effects"
+    ],
+    "color_palette": "bold primary colors with dramatic contrast",
+    "line_style": "thick, bold lines with detailed crosshatching"
+  },
+  "european": {
+    "description": "Franco-Belgian comic style with detailed artwork and sophisticated storytelling",
+    "base_prompt": "european comic style, ligne claire, detailed artwork, sophisticated composition, belgian comic",
+    "negative_prompt": "manga, anime, american comic, superhero style",
+    "characteristics": [
+      "ligne claire (clear line) style",
+      "detailed backgrounds and environments",
+      "sophisticated color palettes",
+      "realistic proportions",
+      "atmospheric lighting",
+      "narrative-focused composition"
+    ],
+    "color_palette": "muted, sophisticated colors with atmospheric lighting",
+    "line_style": "clean, precise lines with attention to detail"
+  },
+  "webcomic": {
+    "description": "Modern digital webcomic style with clean, accessible artwork",
+    "base_prompt": "webcomic style, digital art, clean lines, modern comic, accessible artwork, simple shading",
+    "negative_prompt": "complex, detailed, realistic, traditional media",
+    "characteristics": [
+      "simple, clean character designs",
+      "minimalist backgrounds",
+      "flat or simple shading",
+      "readable linework",
+      "consistent character models",
+      "web-optimized artwork"
+    ],
+    "color_palette": "bright, accessible colors with good contrast",
+    "line_style": "clean, consistent lines suitable for web display"
+  },
+  "vintage": {
+    "description": "Classic comic strip style reminiscent of golden age comics",
+    "base_prompt": "vintage comic style, golden age comic, retro comic strip, classic comic art, old school comic",
+    "negative_prompt": "modern, digital art, manga, anime, contemporary",
+    "characteristics": [
+      "simple, iconic character designs",
+      "limited color palette",
+      "bold, simple linework",
+      "nostalgic, retro aesthetic",
+      "strip format composition",
+      "classic comic timing"
+    ],
+    "color_palette": "limited, nostalgic colors often with newsprint texture",
+    "line_style": "bold, simple lines with classic comic proportions"
+  },
+  "noir": {
+    "description": "Dark, moody comic style with high contrast and dramatic shadows",
+    "base_prompt": "noir comic style, dark moody atmosphere, high contrast, dramatic shadows, film noir aesthetic",
+    "negative_prompt": "bright colors, cheerful, light atmosphere, manga, anime",
+    "characteristics": [
+      "high contrast black and white",
+      "dramatic shadows and lighting",
+      "moody, atmospheric backgrounds",
+      "dark, gritty aesthetic",
+      "mysterious, suspenseful tone",
+      "urban, city environments"
+    ],
+    "color_palette": "monochrome with high contrast, occasional accent colors",
+    "line_style": "bold, dramatic lines with heavy shadows"
+  }
+} 
