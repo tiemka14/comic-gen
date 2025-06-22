@@ -8,10 +8,13 @@ Usage:
 
 Setup Instructions for RunPod:
 1. Launch GPU instance (RTX 4090, A100, or similar)
-2. Install dependencies: pip install -r requirements.txt
-3. Upload your comic images to input_images/
-4. Run this script with your parameters
-5. Monitor training progress and download model when complete
+2. Clone repository with submodules: git clone --recursive https://github.com/your-username/comic-gen.git
+3. Install dependencies: pip install -r requirements.txt && cd kohya && pip install -r requirements.txt && cd ..
+4. Upload your comic images to input_images/
+5. Run this script with your parameters
+6. Monitor training progress and download model when complete
+
+Note: This script now uses the Kohya SS submodule located in the kohya/ directory.
 """
 
 import os
@@ -27,8 +30,8 @@ from typing import List, Dict, Optional
 from PIL import Image
 import torch
 
-# Add Kohya SS to path
-sys.path.append('./sd-scripts')
+# Add Kohya SS submodule to path
+sys.path.append('./kohya')
 
 
 class LoRATrainer:
@@ -63,6 +66,7 @@ class LoRATrainer:
         print(f"📁 Input directory: {input_dir}")
         print(f"📁 Dataset path: {self.dataset_path}")
         print(f"📁 Output path: {self.output_path}")
+        print(f"🔧 Using Kohya SS from submodule: ./kohya/")
     
     def _create_directories(self):
         """Create necessary directories for training"""
@@ -205,12 +209,9 @@ class LoRATrainer:
             if (i + 1) % 10 == 0:
                 print(f"   Processed {i + 1}/{len(val_files)} validation images")
         
-        print(f"✅ Dataset preparation complete!")
-        print(f"   Training images: {len(train_files)}")
-        print(f"   Validation images: {len(val_files)}")
-        print(f"   Total images: {len(image_files)}")
-        print(f"   Training directory: {train_repeat_dir}")
-        print(f"   Validation directory: {val_repeat_dir}")
+        print(f"✅ Dataset preparation completed!")
+        print(f"📊 Training images: {len(train_files)}")
+        print(f"📊 Validation images: {len(val_files)}")
         
         return True
     
@@ -365,15 +366,14 @@ class LoRATrainer:
         print(f"🚀 Starting LoRA training for {self.comic_name}...")
         print(f"⏱️ This may take several hours depending on your dataset size")
         
-        # Check if Kohya SS is available
-        if not os.path.exists('./sd-scripts'):
-            print("❌ Kohya SS not found. Please install it first:")
-            print("   git clone https://github.com/kohya-ss/sd-scripts")
-            print("   cd sd-scripts && pip install -r requirements.txt")
+        # Check if Kohya SS submodule is available
+        if not os.path.exists('./kohya'):
+            print("❌ Kohya SS submodule not found. Please initialize submodules:")
+            print("   git submodule update --init --recursive")
             return False
         
-        # Change to Kohya SS directory
-        os.chdir('./sd-scripts')
+        # Change to Kohya SS submodule directory
+        os.chdir('./kohya')
         
         # Build training command
         # Note: train_data_dir should point to the parent directory containing train/validation folders
@@ -418,6 +418,7 @@ class LoRATrainer:
         print(f"   ../{self.dataset_path}/")
         print(f"   ├── train/ (training images)")
         print(f"   └── validation/ (validation images)")
+        print(f"🔧 Using Kohya SS from: ./kohya/")
         print("\n🚀 Starting training...")
         
         try:

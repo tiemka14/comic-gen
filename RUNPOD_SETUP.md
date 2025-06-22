@@ -5,9 +5,10 @@ This guide will walk you through setting up and running LoRA training on RunPod 
 ## 🚀 Quick Start
 
 1. **Launch RunPod Instance** (5 minutes)
-2. **Upload Your Comic Images** (10 minutes)
-3. **Run Training Notebook** (2-8 hours depending on dataset)
-4. **Download Your Trained Model** (5 minutes)
+2. **Clone Repository with Submodules** (5 minutes)
+3. **Upload Your Comic Images** (10 minutes)
+4. **Run Training Notebook** (2-8 hours depending on dataset)
+5. **Download Your Trained Model** (5 minutes)
 
 ## 📋 Prerequisites
 
@@ -48,31 +49,34 @@ Storage: 100GB+ (SSD preferred)
 
 ## 📁 Step 2: Prepare Your Workspace
 
-### 2.1 Clone the Repository
+### 2.1 Clone the Repository with Submodules
 In Jupyter Lab, open a terminal and run:
 
 ```bash
-# Clone the comic-gen repository
-git clone https://github.com/your-username/comic-gen.git
+# Clone the comic-gen repository with submodules
+git clone --recursive https://github.com/your-username/comic-gen.git
 cd comic-gen
 
-# Or upload the files manually if you have them locally
+# If you already cloned without --recursive, initialize submodules manually:
+git submodule update --init --recursive
 ```
 
 ### 2.2 Install Dependencies
 ```bash
-# Install required packages
+# Install main project dependencies
+pip install -r requirements.txt
+
+# Install Kohya SS dependencies (now in submodule)
+cd kohya
+pip install -r requirements.txt
+cd ..
+
+# Install additional PyTorch packages if needed
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 pip install diffusers transformers accelerate safetensors
 pip install xformers
 pip install opencv-python pillow pyyaml
 pip install jupyter ipywidgets
-
-# Clone Kohya SS
-git clone https://github.com/kohya-ss/sd-scripts
-cd sd-scripts
-pip install -r requirements.txt
-cd ..
 ```
 
 ### 2.3 Verify Installation
@@ -80,6 +84,9 @@ cd ..
 # Check GPU availability
 python -c "import torch; print(f'CUDA available: {torch.cuda.is_available()}')"
 python -c "import torch; print(f'GPU: {torch.cuda.get_device_name(0)}')"
+
+# Verify Kohya submodule is properly set up
+ls -la kohya/
 ```
 
 ## 🖼️ Step 3: Prepare Your Dataset
@@ -155,6 +162,8 @@ TRAINING_CONFIG = {
 2. Run cells 1-3 (setup and data preparation)
 3. **Uncomment the training command** in cell 4
 4. Run cell 4 to start training
+
+**Note**: The training notebook now references scripts from the `kohya/` submodule directory.
 
 ### 5.2 Monitor Training
 - **Loss**: Should decrease over time
@@ -260,6 +269,34 @@ cd /path/to/comic-gen
 python app/app.py
 ```
 
+## 🔄 Managing the Kohya Submodule
+
+### Updating Kohya
+If you need the latest Kohya features:
+
+```bash
+# Update Kohya to latest version
+git submodule update --remote kohya
+git add kohya
+git commit -m "Update Kohya submodule to latest version"
+
+# Reinstall dependencies if needed
+cd kohya
+pip install -r requirements.txt
+cd ..
+```
+
+### Using Specific Kohya Version
+If you need a specific version for compatibility:
+
+```bash
+cd kohya
+git checkout <commit-hash-or-tag>
+cd ..
+git add kohya
+git commit -m "Pin Kohya to specific version"
+```
+
 ## 💰 Cost Optimization
 
 ### 9.1 Instance Selection
@@ -308,6 +345,15 @@ pip install xformers
 "mixed_precision": "fp16"
 ```
 
+#### Submodule Issues
+```bash
+# If Kohya submodule is not working:
+git submodule update --init --recursive
+cd kohya
+git checkout main
+cd ..
+```
+
 #### Connection Issues
 - Use RunPod's built-in terminal
 - Save work frequently
@@ -321,7 +367,8 @@ pip install xformers
 ## 🎉 Success Checklist
 
 - [ ] RunPod instance launched successfully
-- [ ] Dependencies installed
+- [ ] Repository cloned with submodules
+- [ ] Dependencies installed (main + Kohya)
 - [ ] Images uploaded and processed
 - [ ] Training configuration set
 - [ ] Training completed without errors
@@ -336,6 +383,7 @@ pip install xformers
 - [RunPod Documentation](https://docs.runpod.io/)
 - [LoRA Training Guide](https://github.com/kohya-ss/sd-scripts/wiki/LoRA-training)
 - [Stable Diffusion Guide](https://huggingface.co/docs/diffusers/training/lora)
+- [Git Submodules Guide](https://git-scm.com/book/en/v2/Git-Tools-Submodules)
 
 ---
 
