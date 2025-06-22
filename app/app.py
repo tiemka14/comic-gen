@@ -12,11 +12,11 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from scripts.prompt_templates import PromptTemplates
 
 # Load generation config
-def load_config(path="../configs/generation_config.yaml"):
+def load_config(path="configs/generation_config.yaml"):
     with open(path, 'r') as f:
         return yaml.safe_load(f)
 
-def load_styles(path="../templates/comic_styles.json"):
+def load_styles(path="templates/comic_styles.json"):
     with open(path, 'r') as f:
         return json.load(f)
 
