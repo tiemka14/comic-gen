@@ -349,6 +349,9 @@ class LoRATrainer:
         with open(config_path, 'w') as f:
             yaml.dump(config, f, default_flow_style=False)
         
+        # Make config_path absolute so it can be accessed after chdir
+        config_path = os.path.abspath(config_path)
+        
         print(f"✅ Training configuration saved: {config_path}")
         print(f"📊 Training for {epochs} epochs")
         print(f"🎯 LoRA rank: {lora_rank}")
