@@ -1,4 +1,14 @@
+# Dataset configuration for Stalwart2
+# Training dataset
 [[datasets]]
+resolution = 512
+batch_size = 1
+enable_bucket = true
+min_bucket_reso = 256
+max_bucket_reso = 1024
+bucket_reso_steps = 32
+bucket_no_upscale = true
+
 [[datasets.subsets]]
 image_dir = "./dataset/Stalwart2/train"
 num_repeats = 10
@@ -7,14 +17,17 @@ shuffle_caption = false
 color_aug = false
 flip_aug = true
 random_crop = false
+
+# Validation dataset
+[[datasets]]
 resolution = 512
+batch_size = 1
 enable_bucket = true
 min_bucket_reso = 256
 max_bucket_reso = 1024
 bucket_reso_steps = 32
 bucket_no_upscale = true
 
-[[datasets]]
 [[datasets.subsets]]
 image_dir = "./dataset/Stalwart2/validation"
 num_repeats = 1
@@ -22,10 +35,4 @@ caption_extension = ".txt"
 shuffle_caption = false
 color_aug = false
 flip_aug = false
-random_crop = false
-resolution = 512
-enable_bucket = true
-min_bucket_reso = 256
-max_bucket_reso = 1024
-bucket_reso_steps = 32
-bucket_no_upscale = true 
+random_crop = false 

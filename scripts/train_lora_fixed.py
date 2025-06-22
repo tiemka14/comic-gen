@@ -354,6 +354,14 @@ class LoRATrainer:
         toml_config = f"""# Dataset configuration for {self.comic_name}
 # Training dataset
 [[datasets]]
+resolution = {self.target_size}
+batch_size = 1
+enable_bucket = true
+min_bucket_reso = 256
+max_bucket_reso = 1024
+bucket_reso_steps = 32
+bucket_no_upscale = true
+
 [[datasets.subsets]]
 image_dir = "./dataset/{self.comic_name}/train"
 num_repeats = 10
@@ -362,15 +370,17 @@ shuffle_caption = false
 color_aug = false
 flip_aug = true
 random_crop = false
+
+# Validation dataset
+[[datasets]]
 resolution = {self.target_size}
+batch_size = 1
 enable_bucket = true
 min_bucket_reso = 256
 max_bucket_reso = 1024
 bucket_reso_steps = 32
 bucket_no_upscale = true
 
-# Validation dataset
-[[datasets]]
 [[datasets.subsets]]
 image_dir = "./dataset/{self.comic_name}/validation"
 num_repeats = 1
@@ -379,12 +389,6 @@ shuffle_caption = false
 color_aug = false
 flip_aug = false
 random_crop = false
-resolution = {self.target_size}
-enable_bucket = true
-min_bucket_reso = 256
-max_bucket_reso = 1024
-bucket_reso_steps = 32
-bucket_no_upscale = true
 """
         
         # Save configuration as TOML
