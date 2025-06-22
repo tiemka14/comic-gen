@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-Comic-Gen: LoRA Training Script
-Trains a LoRA model on your comic art style and characters using Kohya SS.
+Comic-Gen: LoRA Training Script (Fixed Version)
+Trains a LoRA model on your comic art style and characters using Kohya SS with validation support.
 
 Usage:
-    python train_lora.py --comic_name "your_comic" --epochs 100 --learning_rate 1e-4
+    python train_lora_fixed.py --comic_name "your_comic" --epochs 100 --learning_rate 1e-4
 
 Setup Instructions for RunPod:
 1. Launch GPU instance (RTX 4090, A100, or similar)
@@ -35,7 +35,7 @@ sys.path.append('./kohya')
 
 
 class LoRATrainer:
-    """LoRA Training class for comic generation"""
+    """LoRA Training class for comic generation with validation support"""
     
     def __init__(self, comic_name: str, input_dir: str = "input_images"):
         """
@@ -137,7 +137,7 @@ class LoRATrainer:
         return caption
     
     def prepare_dataset(self):
-        """Prepare the dataset for training"""
+        """Prepare the dataset for training with proper directory structure"""
         print(f"🔄 Preparing dataset for {self.comic_name}...")
         
         if not os.path.exists(self.input_dir):
@@ -399,133 +399,9 @@ bucket_no_upscale = true
         
         return config_path
 
-    def create_validation_config(self):
-        """Create a separate validation dataset configuration"""
-        print(f"⚙️ Creating validation dataset configuration...")
-        
-        # Validation dataset config
-        val_config = {
-            "general": {
-                "enable_bucket": True,
-                "resolution": self.target_size,
-                "min_bucket_reso": 256,
-                "max_bucket_reso": 1024,
-                "bucket_reso_steps": 32,
-                "bucket_no_upscale": True,
-                "caption_extension": ".txt",
-                "shuffle_caption": False,
-                "color_aug": False,
-                "flip_aug": False,  # No augmentation for validation
-                "random_crop": False,
-                "cache_latents": True
-            },
-            "datasets": [
-                {
-                    "subsets": [
-                        {
-                            "image_dir": f"{self.dataset_path}/validation",
-                            "metadata_file": None,
-                            "num_repeats": 1,  # Validation doesn't need repetition
-                            "caption_extension": ".txt",
-                            "shuffle_caption": False,
-                            "color_aug": False,
-                            "flip_aug": False,
-                            "random_crop": False,
-                            "resolution": self.target_size,
-                            "enable_bucket": True,
-                            "min_bucket_reso": 256,
-                            "max_bucket_reso": 1024,
-                            "bucket_reso_steps": 32,
-                            "bucket_no_upscale": True
-                        }
-                    ]
-                }
-            ]
-        }
-        
-        # Save validation configuration
-        val_config_path = f"./configs/{self.comic_name}_validation_config.yaml"
-        with open(val_config_path, 'w') as f:
-            yaml.dump(val_config, f, default_flow_style=False)
-        
-        print(f"✅ Validation configuration saved: {val_config_path}")
-        return val_config_path
-
-    def start_training_simple(self, config_path: str):
-        """
-        Start LoRA training using simple directory structure (alternative method)
-        
-        Args:
-            config_path: Path to training configuration file
-        """
-        print(f"🚀 Starting LoRA training for {self.comic_name} (simple method)...")
-        print(f"⏱️ This may take several hours depending on your dataset size")
-        
-        # Check if Kohya SS submodule is available
-        if not os.path.exists('./kohya'):
-            print("❌ Kohya SS submodule not found. Please initialize submodules:")
-            print("   git submodule update --init --recursive")
-            return False
-        
-        # Change to Kohya SS submodule directory
-        os.chdir('./kohya')
-        
-        # Build training command pointing to parent directory
-        # This will include both train and validation subdirectories
-        training_cmd = [
-            "accelerate", "launch", "--num_cpu_threads_per_process", "8",
-            "train_network.py",
-            "--pretrained_model_name_or_path=runwayml/stable-diffusion-v1-5",
-            f"--train_data_dir=../{self.dataset_path}",  # Point to parent directory
-            f"--output_dir=../{self.output_path}",
-            "--resolution=512",
-            "--network_alpha=32",
-            "--save_model_as=safetensors",
-            "--network_module=networks.lora",
-            f"--max_train_epochs={self.get_epochs_from_config(config_path)}",
-            f"--learning_rate={self.get_lr_from_config(config_path)}",
-            f"--unet_lr={self.get_lr_from_config(config_path)}",
-            "--text_encoder_lr=1e-5",
-            f"--network_dim={self.get_rank_from_config(config_path)}",
-            f"--train_batch_size={self.get_batch_size_from_config(config_path)}",
-            "--mixed_precision=fp16",
-            "--save_every_n_epochs=10",
-            "--save_precision=fp16",
-            "--seed=42",
-            "--caption_extension=.txt",
-            "--cache_latents",
-            "--optimizer_type=AdamW8bit",
-            "--max_data_loader_n_workers=0",
-            "--bucket_reso_steps=32",
-            "--xformers",
-            "--bucket_no_upscale",
-            "--noise_offset=0.0",
-            "--token_warmup_min=1",
-            f"--output_name={self.comic_name}_lora"
-        ]
-        
-        print("🔧 Training command (simple method):")
-        print(" ".join(training_cmd))
-        print(f"📁 Training data directory: ../{self.dataset_path}")
-        print(f"📁 This includes both train/ and validation/ subdirectories")
-        print(f"🔧 Using Kohya SS from: ./kohya/")
-        print("\n🚀 Starting training...")
-        
-        try:
-            # Run training
-            result = subprocess.run(training_cmd, check=True)
-            print("✅ Training completed successfully!")
-            return True
-        except subprocess.CalledProcessError as e:
-            print(f"❌ Training failed with error: {e}")
-            return False
-        finally:
-            # Change back to original directory
-            os.chdir('..')
-
     def start_training(self, config_path: str):
         """
-        Start LoRA training using Kohya SS
+        Start LoRA training using Kohya SS with validation support
         
         Args:
             config_path: Path to training configuration file
@@ -694,7 +570,7 @@ bucket_no_upscale = true
     def run_full_pipeline(self, epochs: int = 100, learning_rate: float = 1e-4, 
                          lora_rank: int = 16, batch_size: int = 1):
         """
-        Run the complete training pipeline
+        Run the complete training pipeline with validation support
         
         Args:
             epochs: Number of training epochs
@@ -742,7 +618,7 @@ bucket_no_upscale = true
 
 def main():
     """Main function for command-line usage"""
-    parser = argparse.ArgumentParser(description="Train LoRA model for comic generation")
+    parser = argparse.ArgumentParser(description="Train LoRA model for comic generation with validation")
     parser.add_argument("--comic_name", "-n", required=True, help="Name of your comic")
     parser.add_argument("--input_dir", "-i", default="input_images", help="Input images directory")
     parser.add_argument("--epochs", "-e", type=int, default=100, help="Number of training epochs")
