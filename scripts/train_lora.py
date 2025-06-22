@@ -351,6 +351,7 @@ class LoRATrainer:
         
         # Kohya SS expects TOML format for dataset config
         # Create TOML configuration with both training and validation datasets
+        # Note: Paths are relative to the kohya/ directory where training runs from
         toml_config = f"""# Dataset configuration for {self.comic_name}
 # Training dataset
 [[datasets]]
@@ -363,7 +364,7 @@ bucket_reso_steps = 32
 bucket_no_upscale = true
 
 [[datasets.subsets]]
-image_dir = "./dataset/{self.comic_name}/train"
+image_dir = "../dataset/{self.comic_name}/train"
 num_repeats = 10
 caption_extension = ".txt"
 shuffle_caption = false
@@ -382,7 +383,7 @@ bucket_reso_steps = 32
 bucket_no_upscale = true
 
 [[datasets.subsets]]
-image_dir = "./dataset/{self.comic_name}/validation"
+image_dir = "../dataset/{self.comic_name}/validation"
 num_repeats = 1
 caption_extension = ".txt"
 shuffle_caption = false
