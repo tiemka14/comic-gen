@@ -379,12 +379,14 @@ class LoRATrainer:
         os.chdir('./kohya')
         
         # Build training command
-        # Note: train_data_dir should point to the parent directory containing train/validation folders
+        # Note: train_data_dir points to the parent directory of your image folders.
+        # Based on user feedback, pointing directly to the train folder resolved a "No data found" error.
+        # This will ignore the validation set, but it ensures training starts correctly.
         training_cmd = [
             "accelerate", "launch", "--num_cpu_threads_per_process", "8",
             "train_network.py",
             "--pretrained_model_name_or_path=runwayml/stable-diffusion-v1-5",
-            f"--train_data_dir=../{self.dataset_path}/train",
+            f"--train_data_dir=../{self.dataset_path}/train",  # Point directly to the train subdir
             f"--output_dir=../{self.output_path}",
             "--resolution=512",
             "--network_alpha=32",
@@ -418,7 +420,7 @@ class LoRATrainer:
         print(f"📁 Expected structure:")
         print(f"   ../{self.dataset_path}/")
         print(f"   ├── train/ (training images)")
-        print(f"   └── validation/ (validation images)")
+        print(f"   └── validation/ (validation images, will be ignored by this config)")
         print(f"🔧 Using Kohya SS from: ./kohya/")
         print("\n🚀 Starting training...")
         

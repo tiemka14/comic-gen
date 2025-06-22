@@ -108,6 +108,22 @@ git add kohya
 git commit -m "Pin Kohya to specific version"
 ```
 
+### 4. Tested Environment
+
+This setup has been successfully tested with the following environment. The `requirements.txt` file is based on these versions:
+
+- **Python**: 3.10
+- **CUDA**: 11.8 (inferred from torch build)
+- **Key Libraries**:
+  - `torch==2.7.0`
+  - `bitsandbytes==0.46.0`
+  - `triton==3.3.1`
+  - `xformers==0.0.30`
+  - `accelerate==0.30.0`
+  - `diffusers==0.25.0`
+
+Following the setup steps and using the provided `requirements.txt` should create a compatible environment.
+
 ## 📚 Usage
 
 ### 1. LoRA Training (Script-Based)

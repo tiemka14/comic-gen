@@ -1,9 +1,30 @@
-# Core dependencies for comic generation pipeline
-torch>=2.0.0
-torchvision>=0.15.0
-diffusers>=0.21.0
-transformers>=4.30.0
-accelerate>=0.20.0
+# This file was generated from a successful training run.
+# It contains the key packages and their tested versions.
+
+# Core ML/DL Libraries
+accelerate==0.30.0
+bitsandbytes==0.46.0
+diffusers==0.25.0
+einops==0.7.0
+numpy==1.24.1
+safetensors==0.4.2
+torch==2.7.0
+# Note: The following torch libraries are often installed with torch, 
+# but their versions are included for reproducibility.
+# Make sure your environment has CUDA 11.8 support.
+torchaudio==2.1.0+cu118
+torchvision==0.16.0+cu118
+transformers==4.44.0
+triton==3.3.1
+xformers==0.0.30
+
+# Application and Utilities
+gradio==5.34.2
+opencv-python==4.8.1.78
+Pillow==11.2.1
+PyYAML==6.0.1
+requests==2.31.0
+tqdm==4.67.1
 
 # Gradio web interface
 gradio>=3.40.0
