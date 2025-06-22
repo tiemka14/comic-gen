@@ -384,7 +384,7 @@ class LoRATrainer:
             "accelerate", "launch", "--num_cpu_threads_per_process", "8",
             "train_network.py",
             "--pretrained_model_name_or_path=runwayml/stable-diffusion-v1-5",
-            f"--train_data_dir=../{self.dataset_path}",  # Point to parent directory, not train subdirectory
+            f"--train_data_dir=../{self.dataset_path}/train",
             f"--output_dir=../{self.output_path}",
             "--resolution=512",
             "--network_alpha=32",
@@ -414,7 +414,7 @@ class LoRATrainer:
         
         print("🔧 Training command:")
         print(" ".join(training_cmd))
-        print(f"📁 Training data directory: ../{self.dataset_path}")
+        print(f"📁 Training data directory: ../{self.dataset_path}/train")
         print(f"📁 Expected structure:")
         print(f"   ../{self.dataset_path}/")
         print(f"   ├── train/ (training images)")
