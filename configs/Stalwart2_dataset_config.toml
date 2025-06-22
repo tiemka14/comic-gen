@@ -6,7 +6,7 @@ batch_size = 1
 enable_bucket = true
 min_bucket_reso = 256
 max_bucket_reso = 1024
-bucket_reso_steps = 32
+bucket_reso_steps = 64
 bucket_no_upscale = true
 
 [[datasets.subsets]]
@@ -25,7 +25,7 @@ batch_size = 1
 enable_bucket = true
 min_bucket_reso = 256
 max_bucket_reso = 1024
-bucket_reso_steps = 32
+bucket_reso_steps = 64
 bucket_no_upscale = true
 
 [[datasets.subsets]]

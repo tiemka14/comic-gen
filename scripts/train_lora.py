@@ -360,7 +360,7 @@ batch_size = 1
 enable_bucket = true
 min_bucket_reso = 256
 max_bucket_reso = 1024
-bucket_reso_steps = 32
+bucket_reso_steps = 64
 bucket_no_upscale = true
 
 [[datasets.subsets]]
@@ -379,7 +379,7 @@ batch_size = 1
 enable_bucket = true
 min_bucket_reso = 256
 max_bucket_reso = 1024
-bucket_reso_steps = 32
+bucket_reso_steps = 64
 bucket_no_upscale = true
 
 [[datasets.subsets]]
@@ -415,7 +415,7 @@ random_crop = false
                 "resolution": self.target_size,
                 "min_bucket_reso": 256,
                 "max_bucket_reso": 1024,
-                "bucket_reso_steps": 32,
+                "bucket_reso_steps": 64,
                 "bucket_no_upscale": True,
                 "caption_extension": ".txt",
                 "shuffle_caption": False,
@@ -440,7 +440,7 @@ random_crop = false
                             "enable_bucket": True,
                             "min_bucket_reso": 256,
                             "max_bucket_reso": 1024,
-                            "bucket_reso_steps": 32,
+                            "bucket_reso_steps": 64,
                             "bucket_no_upscale": True
                         }
                     ]
@@ -501,7 +501,7 @@ random_crop = false
             "--cache_latents",
             "--optimizer_type=AdamW8bit",
             "--max_data_loader_n_workers=0",
-            "--bucket_reso_steps=32",
+            "--bucket_reso_steps=64",
             "--xformers",
             "--bucket_no_upscale",
             "--noise_offset=0.0",
@@ -575,7 +575,7 @@ random_crop = false
             "--cache_latents",
             "--optimizer_type=AdamW8bit",
             "--max_data_loader_n_workers=0",
-            "--bucket_reso_steps=32",
+            "--bucket_reso_steps=64",
             "--xformers",
             "--bucket_no_upscale",
             "--noise_offset=0.0",
