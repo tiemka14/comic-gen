@@ -359,6 +359,133 @@ class LoRATrainer:
         
         return config_path
     
+    def create_dataset_config(self):
+        """Create a dataset configuration file that includes both training and validation"""
+        print(f"⚙️ Creating dataset configuration...")
+        
+        config = {
+            "datasets": [
+                {
+                    "subsets": [
+                        {
+                            "image_dir": f"{self.dataset_path}/train",
+                            "num_repeats": 10,
+                            "caption_extension": ".txt",
+                            "shuffle_caption": False,
+                            "color_aug": False,
+                            "flip_aug": True,
+                            "random_crop": False,
+                            "resolution": self.target_size,
+                            "enable_bucket": True,
+                            "min_bucket_reso": 256,
+                            "max_bucket_reso": 1024,
+                            "bucket_reso_steps": 32,
+                            "bucket_no_upscale": True
+                        }
+                    ]
+                },
+                {
+                    "subsets": [
+                        {
+                            "image_dir": f"{self.dataset_path}/validation",
+                            "num_repeats": 1,  # Validation typically doesn't need repetition
+                            "caption_extension": ".txt",
+                            "shuffle_caption": False,
+                            "color_aug": False,
+                            "flip_aug": False,  # No augmentation for validation
+                            "random_crop": False,
+                            "resolution": self.target_size,
+                            "enable_bucket": True,
+                            "min_bucket_reso": 256,
+                            "max_bucket_reso": 1024,
+                            "bucket_reso_steps": 32,
+                            "bucket_no_upscale": True
+                        }
+                    ]
+                }
+            ]
+        }
+        
+        # Save configuration
+        config_path = f"./configs/{self.comic_name}_dataset_config.yaml"
+        with open(config_path, 'w') as f:
+            yaml.dump(config, f, default_flow_style=False)
+        
+        print(f"✅ Dataset configuration saved: {config_path}")
+        return config_path
+
+    def start_training_simple(self, config_path: str):
+        """
+        Start LoRA training using simple directory structure (alternative method)
+        
+        Args:
+            config_path: Path to training configuration file
+        """
+        print(f"🚀 Starting LoRA training for {self.comic_name} (simple method)...")
+        print(f"⏱️ This may take several hours depending on your dataset size")
+        
+        # Check if Kohya SS submodule is available
+        if not os.path.exists('./kohya'):
+            print("❌ Kohya SS submodule not found. Please initialize submodules:")
+            print("   git submodule update --init --recursive")
+            return False
+        
+        # Change to Kohya SS submodule directory
+        os.chdir('./kohya')
+        
+        # Build training command pointing to parent directory
+        # This will include both train and validation subdirectories
+        training_cmd = [
+            "accelerate", "launch", "--num_cpu_threads_per_process", "8",
+            "train_network.py",
+            "--pretrained_model_name_or_path=runwayml/stable-diffusion-v1-5",
+            f"--train_data_dir=../{self.dataset_path}",  # Point to parent directory
+            f"--output_dir=../{self.output_path}",
+            "--resolution=512",
+            "--network_alpha=32",
+            "--save_model_as=safetensors",
+            "--network_module=networks.lora",
+            f"--max_train_epochs={self.get_epochs_from_config(config_path)}",
+            f"--learning_rate={self.get_lr_from_config(config_path)}",
+            f"--unet_lr={self.get_lr_from_config(config_path)}",
+            "--text_encoder_lr=1e-5",
+            f"--network_dim={self.get_rank_from_config(config_path)}",
+            f"--train_batch_size={self.get_batch_size_from_config(config_path)}",
+            "--mixed_precision=fp16",
+            "--save_every_n_epochs=10",
+            "--save_precision=fp16",
+            "--seed=42",
+            "--caption_extension=.txt",
+            "--cache_latents",
+            "--optimizer_type=AdamW8bit",
+            "--max_data_loader_n_workers=0",
+            "--bucket_reso_steps=32",
+            "--xformers",
+            "--bucket_no_upscale",
+            "--noise_offset=0.0",
+            "--token_warmup_min=1",
+            f"--output_name={self.comic_name}_lora"
+        ]
+        
+        print("🔧 Training command (simple method):")
+        print(" ".join(training_cmd))
+        print(f"📁 Training data directory: ../{self.dataset_path}")
+        print(f"📁 This includes both train/ and validation/ subdirectories")
+        print(f"🔧 Using Kohya SS from: ./kohya/")
+        print("\n🚀 Starting training...")
+        
+        try:
+            # Run training
+            result = subprocess.run(training_cmd, check=True)
+            print("✅ Training completed successfully!")
+            return True
+        except subprocess.CalledProcessError as e:
+            print(f"❌ Training failed with error: {e}")
+            return False
+        finally:
+            # Change back to original directory
+            os.chdir('..')
+
     def start_training(self, config_path: str):
         """
         Start LoRA training using Kohya SS
@@ -375,18 +502,18 @@ class LoRATrainer:
             print("   git submodule update --init --recursive")
             return False
         
+        # Create dataset configuration
+        dataset_config_path = self.create_dataset_config()
+        
         # Change to Kohya SS submodule directory
         os.chdir('./kohya')
         
-        # Build training command
-        # Note: train_data_dir points to the parent directory of your image folders.
-        # Based on user feedback, pointing directly to the train folder resolved a "No data found" error.
-        # This will ignore the validation set, but it ensures training starts correctly.
+        # Build training command with dataset configuration
         training_cmd = [
             "accelerate", "launch", "--num_cpu_threads_per_process", "8",
             "train_network.py",
             "--pretrained_model_name_or_path=runwayml/stable-diffusion-v1-5",
-            f"--train_data_dir=../{self.dataset_path}/train",  # Point directly to the train subdir
+            f"--dataset_config=../{dataset_config_path}",
             f"--output_dir=../{self.output_path}",
             "--resolution=512",
             "--network_alpha=32",
@@ -416,11 +543,9 @@ class LoRATrainer:
         
         print("🔧 Training command:")
         print(" ".join(training_cmd))
-        print(f"📁 Training data directory: ../{self.dataset_path}/train")
-        print(f"📁 Expected structure:")
-        print(f"   ../{self.dataset_path}/")
-        print(f"   ├── train/ (training images)")
-        print(f"   └── validation/ (validation images, will be ignored by this config)")
+        print(f"📁 Dataset configuration: ../{dataset_config_path}")
+        print(f"📁 Training data: ../{self.dataset_path}/train")
+        print(f"📁 Validation data: ../{self.dataset_path}/validation")
         print(f"🔧 Using Kohya SS from: ./kohya/")
         print("\n🚀 Starting training...")
         
