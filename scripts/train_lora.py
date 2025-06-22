@@ -163,6 +163,12 @@ class LoRATrainer:
         train_files = image_files[:split_idx]
         val_files = image_files[split_idx:]
         
+        # For LoRA training with sampling, we can use all images for training
+        # since sampling provides better evaluation than validation loss
+        print(f"📊 Using all {len(image_files)} images for training (sampling for evaluation)")
+        train_files = image_files  # Use all images for training
+        val_files = []  # No separate validation set needed
+        
         # Create the correct directory structure for Kohya SS
         # The TOML config expects: ./dataset/{comic_name}/train and ./dataset/{comic_name}/validation
         train_dir = f"{self.dataset_path}/train"
@@ -456,6 +462,30 @@ random_crop = false
         print(f"✅ Validation configuration saved: {val_config_path}")
         return val_config_path
 
+    def create_sample_prompts(self):
+        """Create sample prompts file for Kohya SS sampling"""
+        print(f"⚙️ Creating sample prompts file...")
+        
+        sample_prompts = [
+            f"{self.comic_name} style, hero character, determined expression, comic panel --w 512 --h 512 --s 30 --l 7.5",
+            f"{self.comic_name} style, action scene, dynamic pose, comic panel --w 512 --h 512 --s 30 --l 7.5",
+            f"{self.comic_name} style, dialogue scene, two characters talking, comic panel --w 512 --h 512 --s 30 --l 7.5",
+            f"{self.comic_name} style, establishing shot, detailed background, comic panel --w 512 --h 512 --s 30 --l 7.5"
+        ]
+        
+        # Save sample prompts file
+        sample_prompts_path = "./sample_prompts.txt"
+        with open(sample_prompts_path, 'w', encoding='utf-8') as f:
+            for prompt in sample_prompts:
+                f.write(prompt + "\n")
+        
+        print(f"✅ Sample prompts file created: {sample_prompts_path}")
+        print(f"📝 Sample prompts:")
+        for i, prompt in enumerate(sample_prompts):
+            print(f"  {i+1}. {prompt.split(' --')[0]}")
+        
+        return sample_prompts_path
+
     def start_training_simple(self, config_path: str):
         """
         Start LoRA training using simple directory structure (alternative method)
@@ -544,18 +574,19 @@ random_crop = false
             print("   git submodule update --init --recursive")
             return False
         
-        # Create dataset configuration
-        dataset_config_path = self.create_dataset_config()
+        # Create sample prompts file for sampling during training
+        self.create_sample_prompts()
         
         # Change to Kohya SS submodule directory
         os.chdir('./kohya')
         
-        # Build training command with dataset configuration
+        # Build training command with separate train and validation directories
+        # This approach is more reliable for validation
         training_cmd = [
             "accelerate", "launch", "--num_cpu_threads_per_process", "8",
             "train_network.py",
             "--pretrained_model_name_or_path=runwayml/stable-diffusion-v1-5",
-            f"--dataset_config=../{dataset_config_path}",
+            f"--train_data_dir=../{self.dataset_path}/train",
             f"--output_dir=../{self.output_path}",
             "--resolution=512",
             "--network_alpha=32",
@@ -580,15 +611,18 @@ random_crop = false
             "--bucket_no_upscale",
             "--noise_offset=0.0",
             "--token_warmup_min=1",
-            f"--output_name={self.comic_name}_lora"
+            f"--output_name={self.comic_name}_lora",
+            "--sample_every_n_epochs=5",
+            f"--sample_prompts=../sample_prompts.txt",
+            "--sample_sampler=ddim"
         ]
         
         print("🔧 Training command:")
         print(" ".join(training_cmd))
-        print(f"📁 Dataset configuration: ../{dataset_config_path}")
         print(f"📁 Training data: ../{self.dataset_path}/train")
-        print(f"📁 Validation data: ../{self.dataset_path}/validation")
         print(f"🔧 Using Kohya SS from: ./kohya/")
+        print(f"🎨 Sampling will run every 5 epochs")
+        print(f"📝 Sample images will be saved to: ../{self.output_path}/sample/")
         print("\n🚀 Starting training...")
         
         try:
