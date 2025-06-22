@@ -13,6 +13,7 @@ A complete pipeline for generating comic panels from text scripts using Stable D
 
 ```
 comic-gen/
+├── kohya/                        # Kohya SS LoRA training scripts (git submodule)
 ├── notebooks/
 │   └── train_lora.ipynb          # LoRA training notebook (Kohya-compatible)
 ├── scripts/
@@ -27,23 +28,57 @@ comic-gen/
 │   ├── comic_styles.json         # Comic art style definitions
 │   └── panel_types.json          # Panel type templates
 ├── requirements.txt              # Python dependencies
+├── .gitmodules                   # Git submodule configuration
 └── README.md                     # This file
 ```
 
 ## 🛠️ Setup
 
-1. **Install Dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
+### 1. Clone the Repository with Submodules
 
-2. **Setup Kohya Training Environment** (for LoRA training):
-   ```bash
-   # Follow Kohya installation guide or use RunPod
-   git clone https://github.com/kohya-ss/sd-scripts
-   cd sd-scripts
-   pip install -r requirements.txt
-   ```
+```bash
+# Clone the repository and initialize submodules
+git clone --recursive https://github.com/yourusername/comic-gen.git
+cd comic-gen
+
+# If you already cloned without --recursive, initialize submodules manually:
+git submodule update --init --recursive
+```
+
+### 2. Install Dependencies
+
+```bash
+# Install main project dependencies
+pip install -r requirements.txt
+
+# Install Kohya dependencies
+cd kohya
+pip install -r requirements.txt
+cd ..
+```
+
+### 3. Managing the Kohya Submodule
+
+The Kohya SS training scripts are included as a git submodule. This allows you to:
+- Keep the training scripts up-to-date independently
+- Maintain a specific version of Kohya for compatibility
+- Avoid nested git repository issues
+
+**To update Kohya to the latest version:**
+```bash
+git submodule update --remote kohya
+git add kohya
+git commit -m "Update Kohya submodule to latest version"
+```
+
+**To use a specific version of Kohya:**
+```bash
+cd kohya
+git checkout <commit-hash-or-tag>
+cd ..
+git add kohya
+git commit -m "Pin Kohya to specific version"
+```
 
 ## 📚 Usage
 
@@ -58,6 +93,8 @@ The notebook includes:
 - Training configuration
 - LoRA fine-tuning for comic styles
 - Model evaluation and testing
+
+**Note**: The training notebook references scripts from the `kohya/` submodule directory.
 
 ### 2. Script Processing
 
@@ -121,6 +158,11 @@ The system includes templates for:
 2. Create a feature branch
 3. Add your improvements
 4. Submit a pull request
+
+**Note for Contributors**: When contributing, make sure to:
+- Test with the current Kohya submodule version
+- Update the submodule if necessary for new features
+- Document any changes that affect the training pipeline
 
 ## 📄 License
 
