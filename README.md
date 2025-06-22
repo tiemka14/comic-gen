@@ -14,9 +14,8 @@ A complete pipeline for generating comic panels from text scripts using Stable D
 ```
 comic-gen/
 ├── kohya/                        # Kohya SS LoRA training scripts (git submodule)
-├── notebooks/
-│   └── train_lora.ipynb          # LoRA training notebook (Kohya-compatible)
 ├── scripts/
+│   ├── train_lora.py             # Script-based LoRA training (run from project root)
 │   ├── script_to_panels.py       # Script-to-panel processor
 │   └── prompt_templates.py       # Prompt templates and styles
 ├── app/
@@ -111,19 +110,35 @@ git commit -m "Pin Kohya to specific version"
 
 ## 📚 Usage
 
-### 1. LoRA Training
+### 1. LoRA Training (Script-Based)
 
-Open `notebooks/train_lora.ipynb` in your preferred environment:
-- **Local**: Jupyter notebook with Kohya setup
-- **Cloud**: RunPod, Google Colab, or similar
+All training is now done via the script `scripts/train_lora.py`.
 
-The notebook includes:
-- Dataset preparation
-- Training configuration
-- LoRA fine-tuning for comic styles
-- Model evaluation and testing
+**Run the training script from the project root directory:**
 
-**Note**: The training notebook references scripts from the `kohya/` submodule directory.
+```bash
+python scripts/train_lora.py --comic_name "your_comic" --epochs 100 --learning_rate 1e-4
+```
+
+**Arguments:**
+- `--comic_name` (required): Name of your comic (used for model naming)
+- `--input_dir` (optional): Directory containing your comic images (default: `input_images`)
+- `--epochs` (optional): Number of training epochs (default: 100)
+- `--learning_rate` (optional): Learning rate (default: 1e-4)
+- `--lora_rank` (optional): LoRA rank (default: 16)
+- `--batch_size` (optional): Batch size per device (default: 1)
+- `--prepare_only`: Only prepare dataset, don't train
+- `--test_only`: Only test existing model
+
+**Example:**
+```bash
+python scripts/train_lora.py --comic_name "my_comic" --epochs 120 --learning_rate 5e-5
+```
+
+**Note:**
+- Make sure your images are in the `input_images/` directory (or specify with `--input_dir`).
+- The script will handle dataset preparation, training, testing, and model export.
+- You do **not** need to use Jupyter notebooks for any part of the workflow.
 
 ### 2. Script Processing
 
