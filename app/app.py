@@ -4,6 +4,11 @@ from diffusers import StableDiffusionPipeline, DPMSolverMultistepScheduler
 import yaml
 import os
 import json
+import sys
+
+# Add the project root to Python path so we can import from scripts
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from scripts.prompt_templates import PromptTemplates
 
 # Load generation config
