@@ -1,0 +1,44 @@
+dataset:
+  caption_column: text
+  caption_extension: .txt
+  center_crop: true
+  random_flip: true
+  resolution: 512
+  train_data_dir: ./dataset/Stalwart2/train
+  validation_data_dir: ./dataset/Stalwart2/validation
+lora:
+  alpha: 32
+  dropout: 0.1
+  r: 16
+  target_modules:
+  - q_proj
+  - v_proj
+  - k_proj
+  - out_proj
+  - to_q
+  - to_k
+  - to_v
+  - to_out.0
+model:
+  base_model: runwayml/stable-diffusion-v1-5
+  model_name: Stalwart2_lora
+  output_dir: ./outputs/Stalwart2
+prompts:
+  negative_prompt: low quality, blurry, distorted, deformed, bad anatomy, bad proportions
+  train_prompt: Stalwart2 style, comic panel, {description}, high quality, detailed
+  val_prompt: Stalwart2 style, comic panel, {description}, high quality, detailed
+training:
+  eval_steps: 500
+  evaluation_strategy: steps
+  gradient_accumulation_steps: 4
+  gradient_checkpointing: true
+  learning_rate: 0.0001
+  logging_steps: 10
+  lr_scheduler: cosine
+  lr_warmup_steps: 100
+  mixed_precision: fp16
+  num_train_epochs: 100
+  per_device_train_batch_size: 1
+  save_steps: 500
+  save_total_limit: 3
+  weight_decay: 0.01

@@ -1,0 +1,29 @@
+datasets:
+- subsets:
+  - bucket_no_upscale: true
+    bucket_reso_steps: 32
+    caption_extension: .txt
+    color_aug: false
+    enable_bucket: true
+    flip_aug: true
+    image_dir: ./dataset/Stalwart2/train
+    max_bucket_reso: 1024
+    min_bucket_reso: 256
+    num_repeats: 10
+    random_crop: false
+    resolution: 512
+    shuffle_caption: false
+- subsets:
+  - bucket_no_upscale: true
+    bucket_reso_steps: 32
+    caption_extension: .txt
+    color_aug: false
+    enable_bucket: true
+    flip_aug: false
+    image_dir: ./dataset/Stalwart2/validation
+    max_bucket_reso: 1024
+    min_bucket_reso: 256
+    num_repeats: 1
+    random_crop: false
+    resolution: 512
+    shuffle_caption: false
