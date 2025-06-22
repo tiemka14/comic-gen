@@ -57,9 +57,9 @@ class LoRATrainer:
         
         # Character names (customize for your comic)
         self.character_names = [
-            "hero_name",  # Replace with your character names
-            "villain_name",
-            "sidekick_name"
+            "Stalwart",  # Replace with your character names
+            "Octopus",
+            #"sidekick_name"
         ]
         
         print(f"🎨 Initialized LoRA trainer for: {comic_name}")
