@@ -3,3 +3,5 @@ dataset/
 input_images/
 models/
 outputs/
+**/**/__pycache__/
+.gradio/
