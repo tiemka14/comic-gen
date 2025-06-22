@@ -61,6 +61,46 @@ cd comic-gen
 git submodule update --init --recursive
 ```
 
+**Troubleshooting: If you cloned without --recursive**
+
+If you already cloned the repository without the `--recursive` flag, you'll see an empty `kohya/` directory. Here's how to fix it:
+
+```bash
+# Check if submodules are initialized
+ls -la kohya/
+
+# If kohya/ is empty or shows "submodule" files, initialize submodules:
+git submodule update --init --recursive
+
+# Verify the submodule is properly set up
+ls -la kohya/
+# You should see files like train_network.py, requirements.txt, etc.
+
+# If you still have issues, try:
+git submodule init
+git submodule update
+```
+
+**Alternative: Re-clone with submodules**
+```bash
+# If submodule initialization fails, you can re-clone:
+cd ..
+rm -rf comic-gen
+git clone --recursive https://github.com/your-username/comic-gen.git
+cd comic-gen
+```
+
+**Verify Submodule Setup**
+```bash
+# After cloning or initializing, verify everything is set up correctly:
+ls -la kohya/
+# Should show files like: train_network.py, requirements.txt, networks/, etc.
+
+# Check submodule status
+git submodule status
+# Should show: kohya <commit-hash> (path)
+```
+
 ### 2.2 Install Dependencies
 ```bash
 # Install main project dependencies
@@ -352,6 +392,23 @@ git submodule update --init --recursive
 cd kohya
 git checkout main
 cd ..
+
+# If submodule is in detached HEAD state:
+cd kohya
+git checkout main
+git pull origin main
+cd ..
+
+# If submodule shows as modified:
+git submodule update --init --recursive --force
+
+# If you get "fatal: No url found for submodule path":
+git submodule init
+git submodule update
+
+# Verify submodule is properly set up:
+ls -la kohya/
+git submodule status
 ```
 
 #### Connection Issues
@@ -368,6 +425,7 @@ cd ..
 
 - [ ] RunPod instance launched successfully
 - [ ] Repository cloned with submodules
+- [ ] Kohya submodule properly initialized (verify with `ls -la kohya/`)
 - [ ] Dependencies installed (main + Kohya)
 - [ ] Images uploaded and processed
 - [ ] Training configuration set

@@ -45,6 +45,35 @@ cd comic-gen
 git submodule update --init --recursive
 ```
 
+**Troubleshooting: If you cloned without --recursive**
+
+If you already cloned the repository without the `--recursive` flag, you'll see an empty `kohya/` directory. Here's how to fix it:
+
+```bash
+# Check if submodules are initialized
+ls -la kohya/
+
+# If kohya/ is empty or shows "submodule" files, initialize submodules:
+git submodule update --init --recursive
+
+# Verify the submodule is properly set up
+ls -la kohya/
+# You should see files like train_network.py, requirements.txt, etc.
+
+# If you still have issues, try:
+git submodule init
+git submodule update
+```
+
+**Alternative: Re-clone with submodules**
+```bash
+# If submodule initialization fails, you can re-clone:
+cd ..
+rm -rf comic-gen
+git clone --recursive https://github.com/yourusername/comic-gen.git
+cd comic-gen
+```
+
 ### 2. Install Dependencies
 
 ```bash
