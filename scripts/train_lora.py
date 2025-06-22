@@ -395,7 +395,7 @@ class LoRATrainer:
             f"--unet_lr={self.get_lr_from_config(config_path)}",
             "--text_encoder_lr=1e-5",
             f"--network_dim={self.get_rank_from_config(config_path)}",
-            f"--batch_size_per_device={self.get_batch_size_from_config(config_path)}",
+            f"--train_batch_size={self.get_batch_size_from_config(config_path)}",
             "--mixed_precision=fp16",
             "--save_every_n_epochs=10",
             "--save_precision=fp16",
@@ -408,9 +408,7 @@ class LoRATrainer:
             "--xformers",
             "--bucket_no_upscale",
             "--noise_offset=0.0",
-            "--num_vectors_per_token=75",
             "--token_warmup_min=1",
-            "--token_warmup_max=10",
             f"--output_name={self.comic_name}_lora"
         ]
         
