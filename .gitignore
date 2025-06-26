@@ -5,3 +5,7 @@ models/
 outputs/
 **/**/__pycache__/
 .gradio/
+.env
+*.jpg
+*.txt
+myenv/
